@@ -1,1 +1,5 @@
 gsuite_service_account.json
+src/__pycache__/etlGYGdata.cpython-310.pyc
+src/__pycache__/etlIntTourismData.cpython-310.pyc
+src/__pycache__/readMergeCSV.cpython-310.pyc
+src/__pycache__/setDf.cpython-310.pyc
