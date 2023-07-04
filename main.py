@@ -62,7 +62,8 @@ regions = df.loc[
     (df['International tourism, expenditures (current US$)'] > 30000000000) | \
         (df['Country Name'].isin([
             "Small states",
-            "Other small states"
+            "Other small states",
+            "IDA only"
         ]))
     , 'Country Name'].unique()
 
@@ -88,9 +89,19 @@ regions = [x for x in regions if x not in omit_regions]
 df['Region'] = df['Country Name']
 df.loc[~df['Country Name'].isin(regions), "Region"] = "Country"
 
+
+
 df['Investment per arrival'] = df['International tourism, expenditures (current US$)'] / df['International tourism, number of arrivals']
 df['Investment per departure'] = df['International tourism, expenditures (current US$)'] / df['International tourism, number of departures']
 df['Arrival per departure'] = df['International tourism, number of arrivals'] / df['International tourism, number of departures']
+
+df.rename(columns={
+    'International tourism, expenditures (current US$)': "Invesment in tourism",
+    'International tourism, number of arrivals': "Number of arrivals",
+    'International tourism, number of departures': "Number of departures",
+    }, inplace=True)
+
+df.sort_values(by=["Year", "Country Name"], ascending=[False, True], inplace=True)
 
 write_sheet(
     df=df,
@@ -98,3 +109,47 @@ write_sheet(
     sheet="Tourism",
     overwrite=True,
     ss=ss)
+
+from requests import get
+from json import loads
+from pandas import DataFrame
+
+top_cities = get(url="https://travelers-api.getyourguide.com/home/top-cities")
+top_cities = loads(top_cities.content)
+top_cities = DataFrame.from_dict(top_cities['topCities']['items'])
+write_sheet(
+    df=top_cities,
+    sheet="Top Cities",
+    service_account_dict=gsheet_dict,
+    ss=ss,
+    overwrite=True)
+
+top_pois = get(url="https://travelers-api.getyourguide.com/home/top-pois")
+top_pois = loads(top_pois.content)
+top_pois = DataFrame.from_dict(top_pois['topPois'])
+write_sheet(
+    df=top_pois,
+    sheet="Top PoI",
+    service_account_dict=gsheet_dict,
+    ss=ss,
+    overwrite=True)
+
+seo_links = get(url="https://travelers-api.getyourguide.com/home/seo-links")
+seo_links = loads(seo_links.content)
+
+top_countries = DataFrame.from_dict(seo_links['topCountries']['linkSection']['items'])
+write_sheet(
+    df=top_countries,
+    sheet="Top Countries",
+    service_account_dict=gsheet_dict,
+    ss=ss,
+    overwrite=True)
+
+top_destinations = DataFrame.from_dict(seo_links['topDestinations']['linkSection']['items'])
+write_sheet(
+    df=top_destinations,
+    sheet="Top Destinations",
+    service_account_dict=gsheet_dict,
+    ss=ss,
+    overwrite=True)
+
