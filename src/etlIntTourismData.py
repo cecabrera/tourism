@@ -19,6 +19,9 @@ def etlIntTourismData(
     # Sets the data frame into dashboard format
     df = setDf(df=df)
 
+    # Analyze the data to identify inconsistencies or outliers
+    # Check file at /test/test.py and /plots/ folders
+
     # Export data into GSheet to easily manipulate data
     write_sheet(
         df=df,
@@ -26,4 +29,5 @@ def etlIntTourismData(
         sheet=sheet,
         overwrite=True,
         ss=ss)
+
 

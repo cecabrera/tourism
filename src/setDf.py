@@ -60,6 +60,9 @@ def setDf(df: DataFrame) -> DataFrame:
     df['Region'] = df['Country Name']
     df.loc[~df['Country Name'].isin(regions), "Region"] = "Country"
 
+    df['is_region'] = False
+    df.loc[df['Region'].isin(regions), "is_region"] = True
+
     # Set insights
     df['Investment per arrival'] = df['International tourism, expenditures (current US$)'] / df['International tourism, number of arrivals']
     df['Investment per departure'] = df['International tourism, expenditures (current US$)'] / df['International tourism, number of departures']
@@ -67,7 +70,7 @@ def setDf(df: DataFrame) -> DataFrame:
 
     # rename column names
     df.rename(columns={
-        'International tourism, expenditures (current US$)': "Invesment in tourism",
+        'International tourism, expenditures (current US$)': "Investment in tourism",
         'International tourism, number of arrivals': "Number of arrivals",
         'International tourism, number of departures': "Number of departures",
         }, inplace=True)
